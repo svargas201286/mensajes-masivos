@@ -15,7 +15,7 @@ function Options() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <EstadoWhatsapp setIsLogged={setIsLogged} isLogged={isLogged}/>
             <Automatizacion isLogged={isLogged}/>
-            <Estadisticas/>
+            <Estadisticas isLogged={isLogged}/>
           </div>
         </div>
       </div>

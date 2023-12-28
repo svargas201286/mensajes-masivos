@@ -81,28 +81,28 @@ function Automatizacion({ setIsLogged, isLogged }) {
   });
 
   const handleSendRequests = async () => {
+    // Obtén los números directamente del textarea dividido por líneas
+    const numbersFromTextarea = formData.phone
+      .split('\n')
+      .filter((line) => line.trim() !== '');
+  
     setSendingProgress((prevProgress) => ({
       ...prevProgress,
-      totalRequests: additionalNumbers.length,
+      totalRequests: numbersFromTextarea.length,
       currentRequest: 0,
       sending: true,
     }));
   
-    for (const number of additionalNumbers) {
+    // Almacena los números formateados para el mensaje final
+    const formattedNumbers = numbersFromTextarea.map((number) => `549${number}`);
+  
+    for (const number of numbersFromTextarea) {
       setSendingProgress((prevProgress) => ({
         ...prevProgress,
         currentRequest: prevProgress.currentRequest + 1,
       }));
   
       await handleSendRequest(number);
-  
-      // Calcular el tiempo restante en segundos
-      const timeRemaining =
-        (additionalNumbers.length - sendingProgress.currentRequest) * 8;
-      setSendingProgress((prevProgress) => ({
-        ...prevProgress,
-        timeRemaining,
-      }));
   
       // Espera 8 segundos antes de la siguiente solicitud
       await new Promise((resolve) => setTimeout(resolve, 8000));
@@ -112,7 +112,34 @@ function Automatizacion({ setIsLogged, isLogged }) {
       ...prevProgress,
       sending: false,
     }));
+  
+    // Hacer la última petición con la información consolidada
+    try {
+      const userId = localStorage.getItem("userId");
+      const finalMessage = {
+        IdUser: Number(userId),
+        Numeros: formattedNumbers.join(","),
+        ContenidoMensaje: formData.message,
+      };
+  
+      const finalResponse = await fetch("https://localhost:7129/enviar-mensaje", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(finalMessage),
+      });
+  
+      if (finalResponse.ok) {
+        console.log("Mensaje final enviado con éxito");
+      } else {
+        console.error("Error al enviar el mensaje final");
+      }
+    } catch (error) {
+      console.error("Error en la solicitud final:", error);
+    }
   };
+  
   
   const handleDeleteNumber = (index) => {
     setAdditionalNumbers((prevNumbers) =>
@@ -181,24 +208,16 @@ function Automatizacion({ setIsLogged, isLogged }) {
                         Número telefonico (Agregar código de area. Por ejemplo:
                         11)
                       </label>
-                      <div className="flex">
-                        <input
-                          type="number"
-                          id="phone"
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                          placeholder="1166322545"
-                          required
-                          value={formData.phone}
-                          onChange={handleChange}
-                          onKeyDown={handleKeyDown}
-                        />
-                        <Button
-                          type="button"
-                          onClick={handleAddNumber}
-                          className="ml-2"
-                        >
-                          <IoAdd />
-                        </Button>
+                      <div>
+                      <textarea
+        id="phone"
+        rows="4"
+        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        placeholder="Ingresa los números de teléfono, uno por línea..."
+        value={formData.phone}
+        onChange={handleChange}
+      ></textarea>
+
                       </div>
 
                       <label

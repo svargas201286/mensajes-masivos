@@ -1,0 +1,17 @@
+# Bot Whatsapp
+
+/bot/.wwebjs_auth/
+/bot/.wwebjs_cache/
+/bot/dist/
+/bot/node_modules/
+/bot/tmp/
+
+# Client
+
+/client/node_modules/
+
+# Server
+
+/server/.vs/
+/server/bin/
+/server/obj/

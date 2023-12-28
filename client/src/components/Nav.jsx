@@ -13,7 +13,14 @@ function Nav() {
   }, [tienePermisos]);
 
   const handleLogout = () => {
+    // Eliminar los valores de las variables
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+
+    // Establecer tienePermisos en false
     setTienePermisos(false);
+
     // Redirigir a la página "/"
     window.location.href = "/";
   };

@@ -19,7 +19,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:9292/login", {
+      const response = await fetch("https://localhost:7129/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -31,6 +31,11 @@ function Login() {
       });
 
       if (response.ok) {
+        const responseData = await response.json(); // Parsear la respuesta JSON
+
+        localStorage.setItem('userId', responseData.id);
+        localStorage.setItem('userName', responseData.nombre);
+        localStorage.setItem('userEmail', responseData.mail);
         localStorage.setItem('permisos', JSON.stringify({ tienePermisos: true }));
         window.location.reload();
       } else {
