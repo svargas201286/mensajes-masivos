@@ -29,16 +29,18 @@ function Estadisticas({ setIsLogged, isLogged }) {
           const totalMensajes = mensajes
             .filter((mensaje) => mensaje.idUser === Number(userId))
             .reduce((acc, mensaje) => acc + mensaje.totalDeMensajes, 0);
-
+  
           return { name: `Ultimos ${rangoDias} días`, value: totalMensajes };
         } else {
           console.error("Error al obtener mensajes");
+          return null; // Devolver null en caso de error
         }
       } catch (error) {
         console.error("Error en la solicitud:", error);
+        return null; // Devolver null en caso de error
       }
     };
-
+  
     const fetchAllData = async () => {
       try {
         const userId = localStorage.getItem("userId");
@@ -48,19 +50,24 @@ function Estadisticas({ setIsLogged, isLogged }) {
           const totalMensajes = mensajes
             .filter((mensaje) => mensaje.idUser === Number(userId))
             .reduce((acc, mensaje) => acc + mensaje.totalDeMensajes, 0);
-
+  
           return { name: "Todos", value: totalMensajes };
         } else {
           console.error("Error al obtener mensajes");
+          return null; // Devolver null en caso de error
         }
       } catch (error) {
         console.error("Error en la solicitud:", error);
+        return null; // Devolver null en caso de error
       }
     };
-
-    Promise.all([fetchAllData(), fetchData(30), fetchData(7)]).then((results) => {
-      setData(results);
-    });
+  
+    Promise.all([fetchAllData(), fetchData(30), fetchData(7)])
+      .then((results) => {
+        // Filtrar resultados nulos antes de actualizar el estado
+        const filteredResults = results.filter((result) => result !== null);
+        setData(filteredResults.length > 0 ? filteredResults : [{ name: "Datos no disponibles", value: 0 }]);
+      });
   }, []);
 
 
@@ -132,9 +139,6 @@ function Estadisticas({ setIsLogged, isLogged }) {
                 <ModalFooter>
                   <Button color="danger" variant="light" onPress={onClose}>
                     Cerrar
-                  </Button>
-                  <Button color="primary" onPress={onClose}>
-                    Action
                   </Button>
                 </ModalFooter>
               </>

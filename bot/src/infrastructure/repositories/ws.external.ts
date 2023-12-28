@@ -115,8 +115,8 @@ class WsTransporter extends Client implements LeadExternal {
       res.json({ status: this.status });
     });
 
-    this.app.listen(3000, () => {
-      console.log("Servidor Express iniciado en http://localhost:3000");
+    this.app.listen(3050, () => {
+      console.log("Servidor Express iniciado en http://localhost:3050");
     });
   }
 
@@ -144,8 +144,8 @@ class WsTransporter extends Client implements LeadExternal {
 
     console.log(`⚡ Recuerda que el QR se actualiza cada minuto ⚡`);
     console.log(`⚡ Actualiza F5 el navegador para mantener el mejor QR ⚡`);
-    console.log(`⚡ Puedes ver el QR en: http://localhost:3000/qr ⚡`);
-    console.log(`⚡ Estado de inicio de sesión en: http://localhost:3000/login ⚡`);
+    console.log(`⚡ Puedes ver el QR en: http://localhost:3050/qr ⚡`);
+    console.log(`⚡ Estado de inicio de sesión en: http://localhost:3050/login ⚡`);
   };
 }
 

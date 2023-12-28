@@ -23,7 +23,7 @@ function EstadoWhatsapp({ setIsLogged, isLogged }) {
   useEffect(() => {
     const fetchQrCode = async () => {
       try {
-        const loginResponse = await fetch("http://localhost:3000/login"); // Reemplaza con la URL correcta de tu servidor
+        const loginResponse = await fetch("http://localhost:3050/login"); // Reemplaza con la URL correcta de tu servidor
         const { status } = await loginResponse.json();
 
         // Si el status es true, no mostrar el QR
@@ -34,7 +34,7 @@ function EstadoWhatsapp({ setIsLogged, isLogged }) {
         }
 
         // Si el status es false, obtener y mostrar el QR
-        const qrResponse = await fetch("http://localhost:3000/qr"); // Reemplaza con la URL correcta de tu servidor
+        const qrResponse = await fetch("http://localhost:3050/qr"); // Reemplaza con la URL correcta de tu servidor
         const qrSvgContent = await qrResponse.text();
         setQrSvg(qrSvgContent);
         setIsLogged(false);
