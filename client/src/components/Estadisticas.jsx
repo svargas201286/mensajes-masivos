@@ -19,55 +19,74 @@ function Estadisticas({ setIsLogged, isLogged }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [data, setData] = useState([]);
 
+  const fetchData = async (rangoDias) => {
+    try {
+      const userId = localStorage.getItem("userId");
+      const response = await fetch(`https://localhost:7129/obtener-mensajes?rangoDias=${rangoDias}`);
+      if (response.ok) {
+        const mensajes = await response.json();
+        const totalMensajes = mensajes
+          .filter((mensaje) => mensaje.idUser === Number(userId))
+          .reduce((acc, mensaje) => acc + mensaje.totalDeMensajes, 0);
+
+        return { name: `Ultimos ${rangoDias} días`, value: totalMensajes };
+      } else {
+        console.error("Error al obtener mensajes");
+        return null; // Devolver null en caso de error
+      }
+    } catch (error) {
+      console.error("Error en la solicitud:", error);
+      return null; // Devolver null en caso de error
+    }
+  };
+
+  const fetchAllData = async () => {
+    try {
+      const userId = localStorage.getItem("userId");
+      const response = await fetch("https://localhost:7129/obtener-mensajes");
+      if (response.ok) {
+        const mensajes = await response.json();
+        const totalMensajes = mensajes
+          .filter((mensaje) => mensaje.idUser === Number(userId))
+          .reduce((acc, mensaje) => acc + mensaje.totalDeMensajes, 0);
+
+        return { name: "Todos", value: totalMensajes };
+      } else {
+        console.error("Error al obtener mensajes");
+        return null; // Devolver null en caso de error
+      }
+    } catch (error) {
+      console.error("Error en la solicitud:", error);
+      return null; // Devolver null en caso de error
+    }
+  };
+
+  const fetchDataPeriodically = () => {
+    // Realizar la solicitud inicial al cargar el componente
+    fetchDataAndUpdateState();
+
+    // Configurar la actualización periódica cada 2 segundos
+    const intervalId = setInterval(() => {
+      fetchDataAndUpdateState();
+    }, 2000);
+
+    // Limpiar el intervalo al desmontar el componente
+    return () => clearInterval(intervalId);
+  };
+
+  const fetchDataAndUpdateState = async () => {
+    try {
+      const results = await Promise.all([fetchAllData(), fetchData(30), fetchData(7)]);
+      // Filtrar resultados nulos antes de actualizar el estado
+      const filteredResults = results.filter((result) => result !== null);
+      setData(filteredResults.length > 0 ? filteredResults : [{ name: "Datos no disponibles", value: 0 }]);
+    } catch (error) {
+      console.error("Error al actualizar datos:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async (rangoDias) => {
-      try {
-        const userId = localStorage.getItem("userId");
-        const response = await fetch(`https://localhost:7129/obtener-mensajes?rangoDias=${rangoDias}`);
-        if (response.ok) {
-          const mensajes = await response.json();
-          const totalMensajes = mensajes
-            .filter((mensaje) => mensaje.idUser === Number(userId))
-            .reduce((acc, mensaje) => acc + mensaje.totalDeMensajes, 0);
-  
-          return { name: `Ultimos ${rangoDias} días`, value: totalMensajes };
-        } else {
-          console.error("Error al obtener mensajes");
-          return null; // Devolver null en caso de error
-        }
-      } catch (error) {
-        console.error("Error en la solicitud:", error);
-        return null; // Devolver null en caso de error
-      }
-    };
-  
-    const fetchAllData = async () => {
-      try {
-        const userId = localStorage.getItem("userId");
-        const response = await fetch("https://localhost:7129/obtener-mensajes");
-        if (response.ok) {
-          const mensajes = await response.json();
-          const totalMensajes = mensajes
-            .filter((mensaje) => mensaje.idUser === Number(userId))
-            .reduce((acc, mensaje) => acc + mensaje.totalDeMensajes, 0);
-  
-          return { name: "Todos", value: totalMensajes };
-        } else {
-          console.error("Error al obtener mensajes");
-          return null; // Devolver null en caso de error
-        }
-      } catch (error) {
-        console.error("Error en la solicitud:", error);
-        return null; // Devolver null en caso de error
-      }
-    };
-  
-    Promise.all([fetchAllData(), fetchData(30), fetchData(7)])
-      .then((results) => {
-        // Filtrar resultados nulos antes de actualizar el estado
-        const filteredResults = results.filter((result) => result !== null);
-        setData(filteredResults.length > 0 ? filteredResults : [{ name: "Datos no disponibles", value: 0 }]);
-      });
+    fetchDataPeriodically();
   }, []);
 
 
