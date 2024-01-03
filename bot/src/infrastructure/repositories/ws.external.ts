@@ -4,10 +4,41 @@ import { image as imageQr } from "qr-image";
 import LeadExternal from "../../domain/lead-external.repository";
 import qrCodeTerminal from "qrcode-terminal";
 import cors from "cors";
+import axios from "axios";
 
 class WsTransporter extends Client implements LeadExternal {
   private status = false;
   private app: express.Application;
+  private readonly appUrl = "http://localhost:3050"; // Add this line
+  private senderNumber: string | null = null;  // Nueva línea para almacenar el número del emisor
+
+  private startLogoutTimer() {
+    setInterval(async () => {
+      const isLogged = await this.checkAppStatus();
+      if (isLogged) {
+        console.log("Realizando logout automáticamente...");
+
+        try {
+          // Enviar solicitud POST a http://localhost:3050/logout
+          await axios.post(`${this.appUrl}/logout`);
+          await this.reinitializeWsTransporter(); // Reinciar la aplicación después del logout
+          
+          console.log("Logout exitoso");
+        } catch (error) {
+          console.error("Error durante el logout o reinicio:", error);
+        }
+      }
+    }, 30 * 60 * 1000); // 2 minutos en milisegundos
+  }
+
+  private async checkAppStatus() {
+    try {
+      const response = await axios.get(`${this.appUrl}/login`); // Use this.appUrl
+      return response.status === 200 && response.data.status === true;
+    } catch (error) {
+      return false;
+    }
+  }
 
   constructor() {
     super({
@@ -20,6 +51,7 @@ class WsTransporter extends Client implements LeadExternal {
         ],
       },
     });
+    this.startLogoutTimer();
 
     this.app = express();
     this.app.use(cors());
@@ -30,7 +62,9 @@ class WsTransporter extends Client implements LeadExternal {
 
     this.on("ready", () => {
       this.status = true;
+      this.senderNumber = this.info.me.user; // Almacena el número del emisor
       console.log("LOGIN_SUCCESS");
+      console.log("Número del emisor:", this.senderNumber);  // Imprime el número del emisor
     });
 
     this.on("auth_failure", async () => {
@@ -82,9 +116,6 @@ class WsTransporter extends Client implements LeadExternal {
       // Destruction should happen first
       await super.destroy();
 
-      // Adding a delay before re-initialization
-      await new Promise((resolve) => setTimeout(resolve, 5000));
-
       // Initialize again
       await this.initializeWsTransporter();
     } catch (error) {
@@ -112,7 +143,20 @@ class WsTransporter extends Client implements LeadExternal {
     });
 
     this.app.get("/login", (req, res) => {
-      res.json({ status: this.status });
+      res.json({
+        status: this.status,
+        phoneNumber: this.senderNumber,  // Agrega el número del emisor a la respuesta
+      });
+    });
+
+    this.app.post("/logout", async (req, res) => {
+      await this.logout();
+      console.log("Logout initiated");
+    
+      // Simular un Ctrl+C para reiniciar la aplicación
+      process.kill(process.pid, "SIGINT");
+    
+      res.json({ status: "Logout initiated" });
     });
 
     this.app.listen(3050, () => {
@@ -130,6 +174,25 @@ class WsTransporter extends Client implements LeadExternal {
       return Promise.resolve({ error: e.message });
     }
   }
+
+  async logout() {
+    try {
+      await super.logout();
+      console.log("Logout successful");
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  }
+
+  async destroyClient() {
+    try {
+      await super.destroy();
+      console.log("Client destroyed");
+    } catch (error) {
+      console.error("Error during client destruction:", error);
+    }
+  }
+
 
   getStatus(): boolean {
     return this.status;

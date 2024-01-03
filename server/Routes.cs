@@ -110,17 +110,19 @@ public static class Routes
             var idUser = mensaje.IdUser;
             var numeros = mensaje.Numeros;
             var contenidoMensaje = mensaje.ContenidoMensaje;
+            var numeroEmisor = mensaje.NumeroEmisor;  // Nuevo campo en el modelo Mensaje
 
             // Contar la cantidad de números en la cadena
             var totalDeMensajes = numeros.Split(',').Length;
 
             // Insertar el mensaje en la base de datos
-            var insertMensajeQuery = "INSERT INTO mensajes (id_user, numeros, mensaje, totaldemensajes) VALUES (@IdUser, @Numeros, @ContenidoMensaje, @TotalDeMensajes)";
+            var insertMensajeQuery = "INSERT INTO mensajes (id_user, numeros, mensaje, totaldemensajes, numero_emisor) VALUES (@IdUser, @Numeros, @ContenidoMensaje, @TotalDeMensajes, @NumeroEmisor)";
             using var insertMensajeCommand = new MySqlCommand(insertMensajeQuery, connection);
             insertMensajeCommand.Parameters.AddWithValue("@IdUser", idUser);
             insertMensajeCommand.Parameters.AddWithValue("@Numeros", numeros);
             insertMensajeCommand.Parameters.AddWithValue("@ContenidoMensaje", contenidoMensaje);
             insertMensajeCommand.Parameters.AddWithValue("@TotalDeMensajes", totalDeMensajes);
+            insertMensajeCommand.Parameters.AddWithValue("@NumeroEmisor", numeroEmisor);
 
             await insertMensajeCommand.ExecuteNonQueryAsync();
 

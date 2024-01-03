@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, React } from "react";
 import { AiOutlineQrcode } from "react-icons/ai";
 import {
   Modal,
@@ -9,22 +9,30 @@ import {
   Button,
   useDisclosure,
   Chip,
-  Tooltip
+  Tooltip,
 } from "@nextui-org/react";
 import { TbClick } from "react-icons/tb";
 import { FaWhatsapp } from "react-icons/fa";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { AiFillCloseCircle } from "react-icons/ai";
+import { LuTimer } from "react-icons/lu";
+import { RiWhatsappFill } from "react-icons/ri";
 
-function EstadoWhatsapp({ setIsLogged, isLogged }) {
+function EstadoWhatsapp({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [qrSvg, setQrSvg] = useState("");
 
   useEffect(() => {
     const fetchQrCode = async () => {
       try {
-        const loginResponse = await fetch("http://localhost:3050/login"); // Reemplaza con la URL correcta de tu servidor
-        const { status } = await loginResponse.json();
+        const loginResponse = await fetch("http://localhost:3050/login");
+        const { status, phoneNumber: receivedPhoneNumber } =
+          await loginResponse.json();
+
+        // Guardar el número telefónico si está disponible
+        if (receivedPhoneNumber) {
+          setPhoneNumber(receivedPhoneNumber);
+        }
 
         // Si el status es true, no mostrar el QR
         if (status) {
@@ -34,7 +42,7 @@ function EstadoWhatsapp({ setIsLogged, isLogged }) {
         }
 
         // Si el status es false, obtener y mostrar el QR
-        const qrResponse = await fetch("http://localhost:3050/qr"); // Reemplaza con la URL correcta de tu servidor
+        const qrResponse = await fetch("http://localhost:3050/qr");
         const qrSvgContent = await qrResponse.text();
         setQrSvg(qrSvgContent);
         setIsLogged(false);
@@ -91,7 +99,17 @@ function EstadoWhatsapp({ setIsLogged, isLogged }) {
                 <ModalBody>
                   {isLogged ? (
                     <>
-                     <Chip
+                      <Chip
+                        startContent={<RiWhatsappFill size={18} />}
+                        variant="faded"
+                        color="success"
+                        className="ml-4"
+                      >
+                        N° Registrado: +{phoneNumber}
+                      </Chip>
+
+                      <div className="flex gap-2">
+                        <Chip
                           startContent={<AiFillCheckCircle size={18} />}
                           variant="faded"
                           color="success"
@@ -99,8 +117,17 @@ function EstadoWhatsapp({ setIsLogged, isLogged }) {
                         >
                           Logueado
                         </Chip>
+                        <Chip
+                          startContent={<LuTimer size={18} />}
+                          variant="faded"
+                          color="warning"
+                          className=""
+                        >
+                          30 min para usar
+                        </Chip>
+                      </div>
 
-                        <div className="ml-4">
+                      <div className="ml-4">
                         Estas logueado, ya puedes pasar a la siguiente etapa
                         <strong> Automatización de Mensajes </strong>
                         para enviar mensajes masivos.
@@ -108,26 +135,23 @@ function EstadoWhatsapp({ setIsLogged, isLogged }) {
                     </>
                   ) : (
                     <>
-                    <div>
-                      <div className="flex gap-2">
-                      <Chip
-                          startContent={<AiFillCloseCircle size={18} />}
-                          variant="faded"
-                          color="warning"
-                          className="ml-4"
-                        >
-                          No logueado
-                        </Chip>
-                      </div>
-                        
-
+                      <div>
+                        <div className="flex gap-2">
+                          <Chip
+                            startContent={<AiFillCloseCircle size={18} />}
+                            variant="faded"
+                            color="warning"
+                            className="ml-4"
+                          >
+                            No logueado
+                          </Chip>
+                        </div>
                       </div>
                       <div dangerouslySetInnerHTML={{ __html: qrSvg }} />
-                      
 
                       <div className="ml-4">
                         Escanea el código QR para poder enviar mensajes másivos
-                        en Whatsapp. 
+                        en Whatsapp.
                       </div>
                     </>
                   )}
@@ -142,7 +166,6 @@ function EstadoWhatsapp({ setIsLogged, isLogged }) {
           </ModalContent>
         </Modal>
       </div>
-
     </>
   );
 }

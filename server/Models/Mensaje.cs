@@ -8,5 +8,6 @@
         public string ContenidoMensaje { get; set; }
         public DateTime FechaCreacion { get; set; }
         public int TotalDeMensajes { get; set; }
+        public string NumeroEmisor { get; set; }  // Nuevo campo para el número emisor
     }
 }

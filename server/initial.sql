@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS mensajes (
     id_user INT,
     FOREIGN KEY (id_user) REFERENCES users(id),
     numeros VARCHAR(255) NOT NULL,
+    numero_emisor VARCHAR(255) NOT NULL,
     mensaje TEXT,
     totaldemensajes INT, -- Agregar la nueva columna 'totaldemensajes'
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP

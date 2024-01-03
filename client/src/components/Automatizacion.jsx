@@ -17,7 +17,7 @@ import { GrSend } from "react-icons/gr";
 import { IoAdd } from "react-icons/io5";
 import { MdDeleteForever } from "react-icons/md";
 
-function Automatizacion({ setIsLogged, isLogged }) {
+function Automatizacion({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [scrollBehavior, setScrollBehavior] = React.useState("inside");
   const [formData, setFormData] = useState({
@@ -120,6 +120,7 @@ function Automatizacion({ setIsLogged, isLogged }) {
         IdUser: Number(userId),
         Numeros: formattedNumbers.join(","),
         ContenidoMensaje: formData.message,
+        NumeroEmisor: phoneNumber,  // Agrega el número del emisor al objeto finalMessage
       };
   
       const finalResponse = await fetch("https://localhost:7129/enviar-mensaje", {
