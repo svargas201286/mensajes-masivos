@@ -1,7 +1,7 @@
 const { exec } = require("child_process");
 const axios = require("axios");
 
-const appUrl = "http://localhost:3050/login"; // Cambia esto según la URL de tu aplicación
+const appUrl = "http://localhost:7131/login"; // Cambia esto según la URL de tu aplicación
 
 const checkAppStatus = async () => {
   try {

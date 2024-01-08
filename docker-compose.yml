@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  client:
+    build:
+      context: ./client
+    ports:
+      - "7130:7130"
+
+  server:
+    build:
+      context: ./server
+    ports:
+      - "7129:7129"
+    depends_on:
+      - mysql
+
+  bot:
+    build:
+      context: ./bot
+    ports:
+      - "7131:7131"
+      - "7132:7132"
+
+  mysql:
+    image: mysql:latest
+    ports:
+      - "7134:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: whatsapp_post_auto
+      MYSQL_ROOT_HOST: '%'
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./server/initial.sql:/docker-entrypoint-initdb.d/initial.sql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+      - "7133:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root

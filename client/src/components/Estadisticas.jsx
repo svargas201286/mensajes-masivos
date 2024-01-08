@@ -22,7 +22,7 @@ function Estadisticas({ setIsLogged, isLogged }) {
   const fetchData = async (rangoDias) => {
     try {
       const userId = localStorage.getItem("userId");
-      const response = await fetch(`https://localhost:7129/obtener-mensajes?rangoDias=${rangoDias}`);
+      const response = await fetch(`http://localhost:7129/obtener-mensajes?rangoDias=${rangoDias}`);
       if (response.ok) {
         const mensajes = await response.json();
         const totalMensajes = mensajes
@@ -43,7 +43,7 @@ function Estadisticas({ setIsLogged, isLogged }) {
   const fetchAllData = async () => {
     try {
       const userId = localStorage.getItem("userId");
-      const response = await fetch("https://localhost:7129/obtener-mensajes");
+      const response = await fetch("http://localhost:7129/obtener-mensajes");
       if (response.ok) {
         const mensajes = await response.json();
         const totalMensajes = mensajes

@@ -51,7 +51,7 @@ function Automatizacion({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) 
 
       setIsLoading(true);
 
-      const response = await fetch("http://localhost:7672/lead", {
+      const response = await fetch("http://localhost:7132/lead", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -105,7 +105,7 @@ function Automatizacion({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) 
       await handleSendRequest(number);
   
       // Espera 8 segundos antes de la siguiente solicitud
-      await new Promise((resolve) => setTimeout(resolve, 8000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   
     setSendingProgress((prevProgress) => ({
@@ -123,7 +123,7 @@ function Automatizacion({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) 
         NumeroEmisor: phoneNumber,  // Agrega el número del emisor al objeto finalMessage
       };
   
-      const finalResponse = await fetch("https://localhost:7129/enviar-mensaje", {
+      const finalResponse = await fetch("http://localhost:7129/enviar-mensaje", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

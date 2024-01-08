@@ -3,7 +3,7 @@ import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, NavbarMenu
 import { AiOutlineLogout } from "react-icons/ai";
 
 function Nav() {
-  // Lee el estado inicial desde localStorage o establece el valor predeterminado como true
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const initialPermissions = JSON.parse(localStorage.getItem('permisos')) || { tienePermisos: true };
   const [tienePermisos, setTienePermisos] = useState(initialPermissions.tienePermisos);
 
@@ -25,18 +25,32 @@ function Nav() {
     window.location.href = "/";
   };
 
+  const menuItems = [
+    "Inicio",
+  ];
+
 
   return (
     <>
-    <Navbar isBordered>
-
+    <Navbar onMenuOpenChange={setIsMenuOpen} isBordered>
+    <NavbarContent>
+    <NavbarMenuToggle
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          className="sm:hidden"
+        />
       <NavbarBrand>
         <a href="/home">
         <img src="/limpiolux-icon.svg"  width={100}/>
         </a>
       </NavbarBrand>
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
       </NavbarContent>
+      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+        <NavbarItem>
+          <Link color="foreground" href="/">
+            Inicio
+          </Link>
+        </NavbarItem>
+      </NavbarContent>      
       <NavbarContent justify="end">
         <NavbarItem>
           <Button as={Link} onClick={handleLogout} color="danger" href="#" variant="flat">
@@ -46,7 +60,22 @@ function Nav() {
           </Button>
         </NavbarItem>
       </NavbarContent>
-    </Navbar>    </>
+
+      <NavbarMenu>
+          <NavbarMenuItem key="1">
+            <Link
+              color="primary"
+              className="w-full"
+              href="/home"
+              size="lg"
+            >
+              Inicio
+            </Link>
+          </NavbarMenuItem>
+      </NavbarMenu>
+      
+    </Navbar>    
+    </>
   );
 }
 

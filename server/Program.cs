@@ -10,14 +10,14 @@ using Auth.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuración de la conexión a la base de datos
+// Configuraciï¿½n de la conexiï¿½n a la base de datos
 builder.Configuration.SetBasePath(AppDomain.CurrentDomain.BaseDirectory);
 builder.Configuration.AddJsonFile("appsettings.json");
 var configuration = builder.Configuration.GetSection("DatabaseSettings");
-var connectionString = "Server=localhost;Database=whatsapp_post_auto;User=root;Password=;Port=3306;";
+var connectionString = "Server=mysql;Database=whatsapp_post_auto;User=root;Password=root;Port=3306;";
 
 var corsPolicy = new CorsPolicyBuilder(builder.Environment.ApplicationName)
-    .WithOrigins("http://localhost:9191")
+    .WithOrigins("http://localhost:7130")
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials()
@@ -30,7 +30,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configuración de la conexión a la base de datos
+// Configuraciï¿½n de la conexiï¿½n a la base de datos
 using var connection = new MySqlConnection(connectionString);
 connection.Open();
 
@@ -38,4 +38,4 @@ Routes.MapRoutes(app, connection, connectionString);
 
 app.UseCors(builder.Environment.ApplicationName);
 
-app.Run();
+app.Run("http://0.0.0.0:7129");

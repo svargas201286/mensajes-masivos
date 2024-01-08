@@ -1,27 +1,20 @@
-# Usa la imagen oficial de SDK de ASP.NET Core como base para construir la aplicación
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-
-# Establece el directorio de trabajo en /src
-WORKDIR /src
-
-# Copia los archivos del proyecto al contenedor
-COPY . .
-
-# Restaura las dependencias y compila la aplicación en modo Release
-RUN dotnet restore
-RUN dotnet publish -c Release -o /app
-
-# Crea una imagen más liviana usando la imagen oficial de ASP.NET Core Runtime
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
-
-# Establece el directorio de trabajo en /app
+# Utiliza una imagen oficial de .NET 6.0 como imagen base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 
-# Copia los archivos publicados de la compilación anterior al contenedor
-COPY --from=build /app .
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+COPY ["Auth.csproj", "."]
+RUN dotnet restore "Auth.csproj"
+COPY . .
+WORKDIR "/src/."
+RUN dotnet build "Auth.csproj" -c Release -o /app/build
 
-# Expone el puerto 80 para las solicitudes HTTP
+FROM build AS publish
+RUN dotnet publish "Auth.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
 EXPOSE 7129
-
-# Define la instrucción para ejecutar tu aplicación al iniciar el contenedor
 ENTRYPOINT ["dotnet", "Auth.dll"]

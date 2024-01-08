@@ -1,7 +1,5 @@
--- Reemplazar nombre de base de datos por la que quieran
+-- Crear la base de datos si no existe
 CREATE DATABASE IF NOT EXISTS whatsapp_post_auto;
-
--- Seleccionar la base de datos
 USE whatsapp_post_auto;
 
 -- Crear la tabla 'users'
@@ -12,6 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
     contraseña VARCHAR(255) NOT NULL
 );
 
+-- Crear la tabla 'mensajes'
 CREATE TABLE IF NOT EXISTS mensajes (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_user INT,
@@ -19,7 +18,7 @@ CREATE TABLE IF NOT EXISTS mensajes (
     numeros VARCHAR(255) NOT NULL,
     numero_emisor VARCHAR(255) NOT NULL,
     mensaje TEXT,
-    totaldemensajes INT, -- Agregar la nueva columna 'totaldemensajes'
+    totaldemensajes INT,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

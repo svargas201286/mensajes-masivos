@@ -9,7 +9,7 @@ import axios from "axios";
 class WsTransporter extends Client implements LeadExternal {
   private status = false;
   private app: express.Application;
-  private readonly appUrl = "http://localhost:3050"; // Add this line
+  private readonly appUrl = "http://localhost:7131"; // Add this line
   private senderNumber: string | null = null;  // Nueva línea para almacenar el número del emisor
 
   private startLogoutTimer() {
@@ -19,7 +19,7 @@ class WsTransporter extends Client implements LeadExternal {
         console.log("Realizando logout automáticamente...");
 
         try {
-          // Enviar solicitud POST a http://localhost:3050/logout
+          // Enviar solicitud POST a http://localhost:7131/logout
           await axios.post(`${this.appUrl}/logout`);
           await this.reinitializeWsTransporter(); // Reinciar la aplicación después del logout
           
@@ -159,8 +159,8 @@ class WsTransporter extends Client implements LeadExternal {
       res.json({ status: "Logout initiated" });
     });
 
-    this.app.listen(3050, () => {
-      console.log("Servidor Express iniciado en http://localhost:3050");
+    this.app.listen(7131, () => {
+      console.log("Servidor Express iniciado en http://localhost:7131");
     });
   }
 
@@ -207,8 +207,8 @@ class WsTransporter extends Client implements LeadExternal {
 
     console.log(`⚡ Recuerda que el QR se actualiza cada minuto ⚡`);
     console.log(`⚡ Actualiza F5 el navegador para mantener el mejor QR ⚡`);
-    console.log(`⚡ Puedes ver el QR en: http://localhost:3050/qr ⚡`);
-    console.log(`⚡ Estado de inicio de sesión en: http://localhost:3050/login ⚡`);
+    console.log(`⚡ Puedes ver el QR en: http://localhost:7131/qr ⚡`);
+    console.log(`⚡ Estado de inicio de sesión en: http://localhost:7131/login ⚡`);
   };
 }
 
