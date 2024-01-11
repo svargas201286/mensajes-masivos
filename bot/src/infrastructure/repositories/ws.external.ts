@@ -1,4 +1,6 @@
 import express from "express";
+import https from "https";
+import fs from "fs";
 import { Client, LocalAuth } from "whatsapp-web.js";
 import { image as imageQr } from "qr-image";
 import LeadExternal from "../../domain/lead-external.repository";
@@ -137,6 +139,17 @@ class WsTransporter extends Client implements LeadExternal {
   }
 
   private setupEndpoints() {
+    const serverOptions = {
+      key: fs.readFileSync("private.key"),
+      cert: fs.readFileSync("certificate.crt"),
+    };
+
+    const server = https.createServer(serverOptions, this.app);
+
+    this.app.get("/", (req, res) => {
+      res.send("API funcionando en el puerto 7131");
+    });
+
     this.app.get("/qr", (req, res) => {
       const path = `${process.cwd()}/tmp/qr.svg`;
       res.sendFile(path);
@@ -159,8 +172,8 @@ class WsTransporter extends Client implements LeadExternal {
       res.json({ status: "Logout initiated" });
     });
 
-    this.app.listen(7131, () => {
-      console.log("Servidor Express iniciado en http://localhost:7131");
+    server.listen(7131, () => {
+      console.log("Servidor Express iniciado en https://localhost:7131");
     });
   }
 

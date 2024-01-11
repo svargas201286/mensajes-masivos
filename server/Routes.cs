@@ -17,6 +17,13 @@ public static class Routes
 {
     public static void MapRoutes(this WebApplication app, MySqlConnection connection, string connectionString)
     {
+
+        app.MapGet("/", async context =>
+        {
+            context.Response.StatusCode = 200;
+            await context.Response.WriteAsync("API Funcionando");
+        });
+
         // Endpoint /register
         app.MapPost("/register", async (HttpContext context, [FromBody] User user) =>
         {

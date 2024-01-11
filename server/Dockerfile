@@ -16,5 +16,15 @@ RUN dotnet publish "Auth.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Agregar el certificado y la clave al contenedor
+COPY certificate.crt /app/certificate.crt
+COPY private.key /app/private.key
+
 EXPOSE 7129
+ENV ASPNETCORE_URLS=https://+:7129
+ENV ASPNETCORE_HTTPS_PORT=7129
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificate.crt
+ENV ASPNETCORE_Kestrel__Certificates__Default__KeyPath=/app/private.key
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password=
 ENTRYPOINT ["dotnet", "Auth.dll"]

@@ -22,7 +22,7 @@ function Estadisticas({ setIsLogged, isLogged }) {
   const fetchData = async (rangoDias) => {
     try {
       const userId = localStorage.getItem("userId");
-      const response = await fetch(`http://localhost:7129/obtener-mensajes?rangoDias=${rangoDias}`);
+      const response = await fetch(`https://whatsapp.limpiolux.com:7129/obtener-mensajes?rangoDias=${rangoDias}`);
       if (response.ok) {
         const mensajes = await response.json();
         const totalMensajes = mensajes
@@ -43,7 +43,7 @@ function Estadisticas({ setIsLogged, isLogged }) {
   const fetchAllData = async () => {
     try {
       const userId = localStorage.getItem("userId");
-      const response = await fetch("http://localhost:7129/obtener-mensajes");
+      const response = await fetch("https://whatsapp.limpiolux.com:7129/obtener-mensajes");
       if (response.ok) {
         const mensajes = await response.json();
         const totalMensajes = mensajes
@@ -121,38 +121,38 @@ function Estadisticas({ setIsLogged, isLogged }) {
             {(onClose) => (
               <>
                 <ModalHeader className="flex flex-col gap-1">
-                Estadísticas
+                  Estadísticas
                 </ModalHeader>
                 <ModalBody>
                   {isLogged ? (
                     <>
-<Card className="max-w-lg">
-    <Title>Tus mensajes enviados</Title>
-    <Flex className="mt-4">
-      <Text>
-        <Bold>Tiempo</Bold>
-      </Text>
-      <Text>
-        <Bold>Mensajes</Bold>
-      </Text>
-    </Flex>
-    <BarList data={data} className="mt-2" />
-  </Card>                    </>
+                      <Card className="max-w-lg">
+                        <Title>Tus mensajes enviados</Title>
+                        <Flex className="mt-4">
+                          <Text>
+                            <Bold>Tiempo</Bold>
+                          </Text>
+                          <Text>
+                            <Bold>Mensajes</Bold>
+                          </Text>
+                        </Flex>
+                        <BarList data={data} className="mt-2" />
+                      </Card>                    </>
                   ) : (
                     <>
-                    <Chip
-                      startContent={<AiFillCloseCircle size={18} />}
-                      variant="faded"
-                      color="warning"
-                      className="ml-4"
-                    >
-                      No logueado
-                    </Chip>
-                    <div className="ml-4">
-                      Por favor, ir a la sección de{" "}
-                      <strong>Estado Whatsapp </strong>y escanear el código QR
-                      para enviar mensajes.
-                    </div>                    </>
+                      <Chip
+                        startContent={<AiFillCloseCircle size={18} />}
+                        variant="faded"
+                        color="warning"
+                        className="ml-4"
+                      >
+                        No logueado
+                      </Chip>
+                      <div className="ml-4">
+                        Por favor, ir a la sección de{" "}
+                        <strong>Estado Whatsapp </strong>y escanear el código QR
+                        para enviar mensajes.
+                      </div>                    </>
                   )}
                 </ModalBody>
                 <ModalFooter>

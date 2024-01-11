@@ -51,7 +51,7 @@ function Automatizacion({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) 
 
       setIsLoading(true);
 
-      const response = await fetch("http://localhost:7132/lead", {
+      const response = await fetch("https://whatsapp.limpiolux.com:7132/lead", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -85,34 +85,34 @@ function Automatizacion({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) 
     const numbersFromTextarea = formData.phone
       .split('\n')
       .filter((line) => line.trim() !== '');
-  
+
     setSendingProgress((prevProgress) => ({
       ...prevProgress,
       totalRequests: numbersFromTextarea.length,
       currentRequest: 0,
       sending: true,
     }));
-  
+
     // Almacena los números formateados para el mensaje final
     const formattedNumbers = numbersFromTextarea.map((number) => `549${number}`);
-  
+
     for (const number of numbersFromTextarea) {
       setSendingProgress((prevProgress) => ({
         ...prevProgress,
         currentRequest: prevProgress.currentRequest + 1,
       }));
-  
+
       await handleSendRequest(number);
-  
+
       // Espera 8 segundos antes de la siguiente solicitud
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
-  
+
     setSendingProgress((prevProgress) => ({
       ...prevProgress,
       sending: false,
     }));
-  
+
     // Hacer la última petición con la información consolidada
     try {
       const userId = localStorage.getItem("userId");
@@ -122,15 +122,15 @@ function Automatizacion({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) 
         ContenidoMensaje: formData.message,
         NumeroEmisor: phoneNumber,  // Agrega el número del emisor al objeto finalMessage
       };
-  
-      const finalResponse = await fetch("http://localhost:7129/enviar-mensaje", {
+
+      const finalResponse = await fetch("https://whatsapp.limpiolux.com:7129/enviar-mensaje", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(finalMessage),
       });
-  
+
       if (finalResponse.ok) {
         console.log("Mensaje final enviado con éxito");
       } else {
@@ -140,8 +140,8 @@ function Automatizacion({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) 
       console.error("Error en la solicitud final:", error);
     }
   };
-  
-  
+
+
   const handleDeleteNumber = (index) => {
     setAdditionalNumbers((prevNumbers) =>
       prevNumbers.filter((_, i) => i !== index)
@@ -210,14 +210,14 @@ function Automatizacion({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) 
                         11)
                       </label>
                       <div>
-                      <textarea
-        id="phone"
-        rows="4"
-        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        placeholder="Ingresa los números de teléfono, uno por línea..."
-        value={formData.phone}
-        onChange={handleChange}
-      ></textarea>
+                        <textarea
+                          id="phone"
+                          rows="4"
+                          className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          placeholder="Ingresa los números de teléfono, uno por línea..."
+                          value={formData.phone}
+                          onChange={handleChange}
+                        ></textarea>
 
                       </div>
 
@@ -296,25 +296,25 @@ function Automatizacion({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) 
                       Cerrar
                     </Button>
                     <Button
-  style={{ backgroundColor: "#0075A9", color: "#ffffff" }}
-  onClick={handleSendRequests}
-  disabled={isLoading || sendingProgress.sending}
-  isLoading={sendingProgress.sending}
-  
->
-  {sendingProgress.sending ? (
-       <div style={{ display: "flex", alignItems: "center" }}>
+                      style={{ backgroundColor: "#0075A9", color: "#ffffff" }}
+                      onClick={handleSendRequests}
+                      disabled={isLoading || sendingProgress.sending}
+                      isLoading={sendingProgress.sending}
 
-       Enviando mensajes ({sendingProgress.currentRequest}/
-       {sendingProgress.totalRequests})
+                    >
+                      {sendingProgress.sending ? (
+                        <div style={{ display: "flex", alignItems: "center" }}>
 
-     </div>  ) : (
-    <>
-      <GrSend />
-      Enviar mensajes
-    </>
-  )}
-</Button>
+                          Enviando mensajes ({sendingProgress.currentRequest}/
+                          {sendingProgress.totalRequests})
+
+                        </div>) : (
+                        <>
+                          <GrSend />
+                          Enviar mensajes
+                        </>
+                      )}
+                    </Button>
                   </>
                 ) : (
                   <>

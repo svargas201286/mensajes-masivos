@@ -25,7 +25,7 @@ function EstadoWhatsapp({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) 
   useEffect(() => {
     const fetchQrCode = async () => {
       try {
-        const loginResponse = await fetch("http://localhost:7131/login");
+        const loginResponse = await fetch("https://whatsapp.limpiolux.com:7131/login");
         const { status, phoneNumber: receivedPhoneNumber } =
           await loginResponse.json();
 
@@ -42,7 +42,7 @@ function EstadoWhatsapp({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) 
         }
 
         // Si el status es false, obtener y mostrar el QR
-        const qrResponse = await fetch("http://localhost:7131/qr");
+        const qrResponse = await fetch("https://whatsapp.limpiolux.com:7131/qr");
         const qrSvgContent = await qrResponse.text();
         setQrSvg(qrSvgContent);
         setIsLogged(false);

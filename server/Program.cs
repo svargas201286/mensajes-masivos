@@ -17,7 +17,7 @@ var configuration = builder.Configuration.GetSection("DatabaseSettings");
 var connectionString = "Server=mysql;Database=whatsapp_post_auto;User=root;Password=root;Port=3306;";
 
 var corsPolicy = new CorsPolicyBuilder(builder.Environment.ApplicationName)
-    .WithOrigins("http://localhost:7130")
+    .WithOrigins("https://whatsapp.limpiolux.com")
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials()
@@ -38,4 +38,4 @@ Routes.MapRoutes(app, connection, connectionString);
 
 app.UseCors(builder.Environment.ApplicationName);
 
-app.Run("http://0.0.0.0:7129");
+app.Run("https://whatsapp.limpiolux.com:7129");
