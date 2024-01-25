@@ -38,8 +38,8 @@ const monitorApp = async () => {
     restartApp();
   }
 
-  // Verificar el estado cada 1 minuto (ajusta según sea necesario)
-  setTimeout(monitorApp, 60000);
+  // Verificar el estado cada 2 minuto (ajusta según sea necesario)
+  setTimeout(monitorApp, 120000);
 };
 
 monitorApp();

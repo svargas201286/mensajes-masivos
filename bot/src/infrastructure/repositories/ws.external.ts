@@ -14,25 +14,6 @@ class WsTransporter extends Client implements LeadExternal {
   private readonly appUrl = "http://localhost:7131"; // Add this line
   private senderNumber: string | null = null;  // Nueva línea para almacenar el número del emisor
 
-  private startLogoutTimer() {
-    setInterval(async () => {
-      const isLogged = await this.checkAppStatus();
-      if (isLogged) {
-        console.log("Realizando logout automáticamente...");
-
-        try {
-          // Enviar solicitud POST a http://localhost:7131/logout
-          await axios.post(`${this.appUrl}/logout`);
-          await this.reinitializeWsTransporter(); // Reinciar la aplicación después del logout
-          
-          console.log("Logout exitoso");
-        } catch (error) {
-          console.error("Error durante el logout o reinicio:", error);
-        }
-      }
-    }, 30 * 60 * 1000); // 2 minutos en milisegundos
-  }
-
   private async checkAppStatus() {
     try {
       const response = await axios.get(`${this.appUrl}/login`); // Use this.appUrl
@@ -53,7 +34,6 @@ class WsTransporter extends Client implements LeadExternal {
         ],
       },
     });
-    this.startLogoutTimer();
 
     this.app = express();
     this.app.use(cors());
