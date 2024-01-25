@@ -60,6 +60,31 @@ function EstadoWhatsapp({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) 
     // Limpiar el intervalo cuando el componente se desmonta
     return () => clearInterval(intervalId);
   }, []);
+  const [isLoading, setIsLoading] = useState(false); // Nuevo estado para controlar el estado de carga
+
+  const handleLogout = async () => {
+    try {
+      setIsLoading(true); // Establecer isLoading en true al comenzar la solicitud
+
+      await fetch("https://whatsapp.limpiolux.com:7131/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      // La solicitud fue exitosa, puedes realizar acciones adicionales aquí si es necesario
+
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      // Manejar el error si es necesario, mostrar un mensaje, etc.
+    } finally {
+      // Establecer isLoading en false después de que la solicitud haya terminado
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 300000); // 15000 milisegundos = 15 segundos
+    }
+  };
 
   return (
     <>
@@ -99,15 +124,6 @@ function EstadoWhatsapp({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) 
                 <ModalBody>
                   {isLogged ? (
                     <>
-                      <Chip
-                        startContent={<RiWhatsappFill size={18} />}
-                        variant="faded"
-                        color="success"
-                        className="ml-4"
-                      >
-                        N° Registrado: +{phoneNumber}
-                      </Chip>
-
                       <div className="flex gap-2">
                         <Chip
                           startContent={<AiFillCheckCircle size={18} />}
@@ -118,12 +134,13 @@ function EstadoWhatsapp({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) 
                           Logueado
                         </Chip>
                         <Chip
-                          startContent={<LuTimer size={18} />}
+                          startContent={<RiWhatsappFill size={18} />}
                           variant="faded"
-                          color="warning"
+                          color="success"
                           className=""
                         >
-                          30 min para usar
+                          N°: +{phoneNumber}
+
                         </Chip>
                       </div>
 
@@ -131,7 +148,12 @@ function EstadoWhatsapp({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) 
                         Estas logueado, ya puedes pasar a la siguiente etapa
                         <strong> Automatización de Mensajes </strong>
                         para enviar mensajes masivos.
+                        <div style={{ marginTop: "10px" }}>
+                        </div>
+
                       </div>
+
+
                     </>
                   ) : (
                     <>
@@ -157,9 +179,20 @@ function EstadoWhatsapp({ setIsLogged, isLogged, phoneNumber, setPhoneNumber }) 
                   )}
                 </ModalBody>
                 <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Cerrar
-                  </Button>
+
+                  {isLogged ? (
+                    <>
+                      <Button color="danger" variant="light" onPress={handleLogout} isLoading={isLoading}>
+                        Cerrar Sesión
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button color="danger" variant="light" onPress={onClose}>
+                        Cerrar ventana
+                      </Button>                    </>
+                  )}
+
                 </ModalFooter>
               </>
             )}
