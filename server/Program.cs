@@ -38,4 +38,24 @@ Routes.MapRoutes(app, connection, connectionString);
 
 app.UseCors(builder.Environment.ApplicationName);
 
+var pingTimer = new System.Threading.Timer(
+    async _ =>
+    {
+        try
+        {
+            using var pingConnection = new MySqlConnection(connectionString);
+            await pingConnection.OpenAsync();
+
+            Console.WriteLine("Ping a la base de datos exitoso en: " + DateTime.Now.ToString());
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Fallo al hacer ping a la base de datos. Error: " + ex.Message);
+        }
+    },
+    null,
+    TimeSpan.Zero,
+    TimeSpan.FromMinutes(1)
+);
+
 app.Run("https://whatsapp.limpiolux.com:7129");
