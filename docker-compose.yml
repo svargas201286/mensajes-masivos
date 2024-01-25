@@ -21,6 +21,7 @@ services:
     ports:
       - "7131:7131"
       - "7132:7132"
+    privileged: true
 
   mysql:
     image: mysql:latest
